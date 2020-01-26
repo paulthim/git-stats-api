@@ -27,6 +27,10 @@ public class User extends Audit {
     public User() {
     }
 
+    public User(Long id) {
+        this.id = id;
+    }
+
     public User(UserRequest userRequest) {
         this.name = userRequest.getName();
         this.email = userRequest.getEmail();

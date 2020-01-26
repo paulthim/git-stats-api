@@ -23,3 +23,7 @@ pong
 
 All API's can be accessed via swagger UI. When application is running in your local, you can access via below URL.
 http://localhost:8080/swagger-ui.html
+
+## TODO
+
+Create git admin email account - may be gmail
