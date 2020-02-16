@@ -1,23 +1,26 @@
 package org.gitstats.api.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
+@Table(name = "project")
 public class Project extends Audit {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @NotNull
-    private String gitUrl;
-    private String gitUserName;
-    private String gitPassword;
+    private String remoteUrl;
     private String name;
 
-    @ManyToOne()
-    @JoinColumn(name = "user_id")
-    private User owner;
+    @ManyToMany(mappedBy = "projects")
+    @JsonIgnoreProperties("projects")
+    private Set<User> users = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -27,12 +30,12 @@ public class Project extends Audit {
         this.id = id;
     }
 
-    public String getGitUrl() {
-        return gitUrl;
+    public String getRemoteUrl() {
+        return remoteUrl;
     }
 
-    public void setGitUrl(String gitUrl) {
-        this.gitUrl = gitUrl;
+    public void setRemoteUrl(String remoteUrl) {
+        this.remoteUrl = remoteUrl;
     }
 
     public String getName() {
@@ -43,34 +46,34 @@ public class Project extends Audit {
         this.name = name;
     }
 
-    public User getOwner() {
-        return owner;
+    public Set<User> getUsers() {
+        return users;
     }
 
-    public void setOwner(User owner) {
-        this.owner = owner;
+    public void setUsers(Set<User> users) { this.users = users; }
+
+    public void addUser(User user) { this.users.add(user); }
+
+    public Boolean hasUserWithId(long userId) {
+        for (User user : users) {
+            if (user.getId().equals(userId))
+                return true;
+        }
+        return false;
     }
 
-    public String getGitUserName() {
-        return gitUserName;
-    }
-
-    public void setGitUserName(String gitUserName) {
-        this.gitUserName = gitUserName;
-    }
-
-    public String getGitPassword() {
-        return gitPassword;
-    }
-
-    public void setGitPassword(String gitPassword) {
-        this.gitPassword = gitPassword;
+    public User getUserById(long userId) {
+        for (User user : users) {
+            if (user.getId().equals(userId))
+                return user;
+        }
+        return null;
     }
 
     public void update(Project updatedProject) {
-        this.setGitUrl(updatedProject.getGitUrl());
-        this.setGitUserName(updatedProject.getGitUserName());
-        this.setGitPassword(updatedProject.getGitPassword());
+        this.setRemoteUrl(updatedProject.getRemoteUrl());
+//        this.setGitUserName(updatedProject.getGitUserName());
+//        this.setGitPassword(updatedProject.getGitPassword());
         this.setName(updatedProject.getName());
     }
 }

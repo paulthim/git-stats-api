@@ -1,12 +1,16 @@
 package org.gitstats.api.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.gitstats.api.models.dto.UserRequest;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
+@Table(name = "user")
 public class User extends Audit {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -23,6 +27,15 @@ public class User extends Audit {
 
     @JsonIgnore
     private String password;
+
+    @ManyToMany(cascade = { CascadeType.ALL })
+    @JoinTable(
+            name = "user_project",
+            joinColumns = { @JoinColumn(name = "user_id", referencedColumnName = "id") },
+            inverseJoinColumns = { @JoinColumn(name = "project_id", referencedColumnName = "id") }
+    )
+    @JsonIgnoreProperties("users")
+    private Set<Project> projects = new HashSet<Project>();
 
     public User() {
     }
@@ -67,6 +80,12 @@ public class User extends Audit {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Set<Project> getProjects() { return projects; };
+
+    public void setProjects(Set<Project> projects) {
+        this.projects = projects;
     }
 
     public UserRole getUserRole() {
