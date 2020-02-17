@@ -1,9 +1,11 @@
 package org.gitstats.api.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -17,10 +19,15 @@ public class Project extends Audit {
     @NotNull
     private String remoteUrl;
     private String name;
+    private Date latestCommitDate;
 
     @ManyToMany(mappedBy = "projects")
     @JsonIgnoreProperties("projects")
     private Set<User> users = new HashSet<>();
+
+    @JsonIgnore
+    private String localPath;
+
 
     public Long getId() {
         return id;
@@ -53,6 +60,18 @@ public class Project extends Audit {
     public void setUsers(Set<User> users) { this.users = users; }
 
     public void addUser(User user) { this.users.add(user); }
+
+    public Date getLatestCommitDate() {
+        return latestCommitDate;
+    }
+
+    public void setLatestCommitDate(Date latestCommitDate) {
+        this.latestCommitDate = latestCommitDate;
+    }
+
+    public String getLocalPath() { return localPath; }
+
+    public void setLocalPath(String localPath) { this.localPath = localPath; }
 
     public Boolean hasUserWithId(long userId) {
         for (User user : users) {
